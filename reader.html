@@ -42,9 +42,9 @@
     const bookId = params.get('id') || 'book-001';
     const accent = params.get('accent') || 'en-gb';
 
-    // 视频路径配置（book-001 使用本地文件，目前英/美口音共用同一视频）
+    // 视频路径配置（book-001 支持英式/美式双口音切换）
     const videoMap = {
-      'book-001': { en_gb: 'books/book-001/video.mp4', en_us: 'books/book-001/video.mp4' }
+      'book-001': { en_gb: 'books/book-001/video_uk.mp4', en_us: 'books/book-001/video_us.mp4' }
     };
     // 实际文件：目前只有合并版，两个口音指向同一文件
     const currentVideo = videoMap[bookId] || videoMap['book-001'];

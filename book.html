@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小兔子的森林冒险 - 宝贝绘本乐园</title>
+  <meta name="description" content="小兔子的森林冒险 - 中英双语儿童绘本，适合3-5岁孩子英语启蒙。">
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f0eb; color: #333; }
+    .header { background: white; padding: 12px 16px; display: flex; align-items: center; border-bottom: 1px solid #e0e0e0; position: sticky; top:0; z-index: 10; }
+    .back-btn { font-size: 20px; text-decoration: none; color: #333; margin-right: 12px; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .cover-section { background: linear-gradient(135deg, #4A90E2, #7B68EE); padding: 32px 20px; text-align: center; color: white; }
+    .cover-img { width: 200px; height: 267px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 16px; }
+    .book-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .book-meta { font-size: 14px; opacity: 0.9; margin-bottom: 4px; }
+    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-top: 12px; background: rgba(255,255,255,0.25); }
+    .info-section { background: white; margin: 16px; border-radius: 12px; padding: 20px; }
+    .info-label { font-size: 12px; color: #999; margin-bottom: 4px; }
+    .info-value { font-size: 15px; color: #333; margin-bottom: 16px; line-height: 1.5; }
+    .action-btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; margin-top: 12px; }
+    .btn-primary { background: #4A90E2; color: white; }
+    .btn-disabled { background: #e0e0e0; color: #999; cursor: not-allowed; }
+    .footer { text-align: center; padding: 32px 20px; color: #666; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="index.html" class="back-btn">←</a>
+    <span class="header-title">绘本书详情</span>
+  </div>
+  <div id="app">
+    <div class="cover-section">
+      <img class="cover-img" id="coverImg" src="" alt="">
+      <div class="book-title" id="bookTitle"></div>
+      <div class="book-meta" id="bookAge"></div>
+      <div class="book-meta" id="bookDesc"></div>
+      <div class="status-badge" id="statusBadge"></div>
+    </div>
+    <div class="info-section">
+      <div class="info-label">适合年龄</div>
+      <div class="info-value" id="infoAge"></div>
+      <div class="info-label">绘本简介</div>
+      <div class="info-value" id="infoDesc"></div>
+      <div id="actionArea"></div>
+    </div>
+    <div class="footer">
+      <p>关注公众号 <strong>不慌小姐不慌张</strong> 获取最新动态</p>
+      <p style="margin-top: 8px; font-size: 12px; color: #999;">© 2026 宝贝绘本乐园</p>
+    </div>
+  </div>
+  <script>
+    const books = {
+      'book-001': { id:'book-001', title:'小舞者的梦想', titleEn:"The Little Dancer's Dream", age:'3-8岁', desc:'一个关于坚持梦想、努力练习、克服困难的故事。小舞者Lily通过不懈的努力，终于登上了梦想的舞台。', status:'online', video:'books/book-001/video.mp4', cover:'books/book-001/cover.png' },
+      'book-002': { id:'book-002', title:'小狐狸的星空之旅', titleEn:"The Little Fox's Starry Sky Journey", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-002/cover.png' },
+      'book-003': { id:'book-003', title:'小熊的蜂蜜收集之旅', titleEn:"The Little Bear's Honey Journey", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-003/cover.png' },
+      'book-004': { id:'book-004', title:'小松鼠的坚果储存计划', titleEn:"The Squirrel's Nut Storage Plan", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-004/cover.png' },
+      'book-005': { id:'book-005', title:'小种子的旅行', titleEn:"The Little Seed's Journey", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-005/cover.png' },
+      'book-006': { id:'book-006', title:'勇敢的小雨滴', titleEn:'The Brave Little Raindrop', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-006/cover.png' },
+      'book-007': { id:'book-007', title:'雪花的秘密', titleEn:"The Snowflake's Secret", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-007/cover.png' },
+      'book-008': { id:'book-008', title:'梦想的距离', titleEn:'The Distance of Dreams', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-008/cover.png' },
+      'book-009': { id:'book-009', title:'小蓝的梦想', titleEn:"Little Blue's Dream", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-009/cover.png' },
+      'book-010': { id:'book-010', title:'小鸟的第一首歌', titleEn:"The Bird's First Song", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-010/cover.png' },
+      'book-011': { id:'book-011', title:'小云的梦想', titleEn:"The Little Cloud's Dream", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-011/cover.png' },
+      'book-012': { id:'book-012', title:'小乌龟的比赛', titleEn:"The Little Turtle's Race", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-012/cover.png' },
+      'book-013': { id:'book-013', title:'彩虹花', titleEn:'The Rainbow Flower', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-013/cover.png' },
+      'book-014': { id:'book-014', title:'感恩的小鹿', titleEn:'The Thankful Deer', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-014/cover.png' },
+      'book-015': { id:'book-015', title:'小刺猬的礼物', titleEn:"The Hedgehog's Gift", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-015/cover.png' },
+      'book-016': { id:'book-016', title:'小蚂蚁的团队合作', titleEn:"The Ants' Teamwork", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-016/cover.png' },
+      'book-017': { id:'book-017', title:'诚实的小老鼠', titleEn:'The Honest Little Mouse', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-017/cover.png' },
+      'book-018': { id:'book-018', title:'小鹰的第一次飞行', titleEn:"The Little Eagle's First Flight", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-018/cover.png' },
+      'book-019': { id:'book-019', title:'小松鼠的珍贵储存', titleEn:"The Little Squirrel's Precious Store", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-019/cover.png' },
+      'book-020': { id:'book-020', title:'不会滑行的小企鹅', titleEn:"The Little Penguin Who Couldn't Slide", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-020/cover.png' },
+      'book-021': { id:'book-021', title:'小海狸的水坝', titleEn:"The Little Beaver's Dam", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-021/cover.png' },
+      'book-022': { id:'book-022', title:'小毛毛虫的蜕变', titleEn:"The Little Caterpillar's Transformation", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-022/cover.png' },
+      'book-023': { id:'book-023', title:'雨后的彩虹', titleEn:'The Rainbow After the Rain', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-023/cover.png' },
+      'book-024': { id:'book-024', title:'看见星星的小鼹鼠', titleEn:'The Little Mole Who Saw the Stars', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-024/cover.png' },
+      'book-025': { id:'book-025', title:'小鲸鱼的唱歌课', titleEn:"Little Whale's Singing Lesson", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-025/cover.png' },
+      'book-026': { id:'book-026', title:'小猫头鹰的四季之旅', titleEn:"The Little Owl's Four Seasons", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-026/cover.png' },
+      'book-027': { id:'book-027', title:'小黄鸭的第一次游泳', titleEn:"The Little Duckling's First Swim", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-027/cover.png' },
+      'book-028': { id:'book-028', title:'小熊猫的竹林', titleEn:"The Little Panda's Bamboo Forest", age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-028/cover.png' },
+      'book-029': { id:'book-029', title:'犯错的小兔子', titleEn:'The Little Rabbit Who Made a Mistake', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-029/cover.png' },
+      'book-030': { id:'book-030', title:'小园丁女孩', titleEn:'The Little Gardener Girl', age:'3-8岁', desc:'更多精彩绘本即将上线，敬请期待！', status:'coming_soon', cover:'books/book-030/cover.png' }
+    };
+
+    const params = new URLSearchParams(location.search);
+    const bookId = params.get('id') || 'book-001';
+    const book = books[bookId] || books['book-001'];
+
+    document.title = `${book.title} - 宝贝绘本乐园`;
+    document.getElementById('coverImg').src = book.cover || '';
+    document.getElementById('coverImg').onerror = function(){ this.style.display='none'; };
+    document.getElementById('bookTitle').textContent = book.title;
+    document.getElementById('bookAge').textContent = `适合年龄：${book.age}`;
+    document.getElementById('bookDesc').textContent = book.desc;
+    document.getElementById('statusBadge').textContent = book.status==='online' ? '✅ 可阅读' : '🚧 筹备中';
+    document.getElementById('infoAge').textContent = book.age;
+    document.getElementById('infoDesc').textContent = book.desc;
+
+    const actionArea = document.getElementById('actionArea');
+    if(book.status === 'online'){
+      actionArea.innerHTML = `<a href="reader.html?id=${book.id}" class="action-btn btn-primary">📖 开始阅读</a>`;
+    } else {
+      actionArea.innerHTML = `<button class="action-btn btn-disabled" disabled>🚧 内容筹备中，敬请期待</button>`;
+    }
+  </script>
+</body>
+</html>

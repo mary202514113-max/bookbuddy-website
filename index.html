@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宝贝绘本乐园 - 30本中英双语儿童绘本</title>
+  <meta name="description" content="30本中英双语儿童绘本，适合3-8岁孩子英语启蒙。吉卜力风格插画，美式/英式双发音。">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f0eb; color: #333; }
+    .header { background: linear-gradient(135deg, #4A90E2, #7B68EE); color: white; padding: 20px; text-align: center; }
+    .header h1 { font-size: 24px; margin-bottom: 8px; }
+    .header p { font-size: 14px; opacity: 0.9; }
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+    .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-top: 20px; }
+    .book-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; text-decoration: none; color: inherit; }
+    .book-card:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .book-cover { width: 100%; height: 200px; object-fit: cover; background: #e8e8e8; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; }
+    .book-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .book-info { padding: 12px; }
+    .book-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
+    .book-meta { font-size: 12px; color: #666; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-top: 6px; }
+    .badge-free { background: #e8f5e9; color: #2e7d32; }
+    .badge-coming { background: #fff3e0; color: #e65100; }
+    .footer { text-align: center; padding: 40px 20px; color: #666; font-size: 13px; }
+    .footer a { color: #4A90E2; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📚 宝贝绘本乐园</h1>
+    <p>30本中英双语儿童绘本 · 适合3-8岁 · 吉卜力风格</p>
+  </div>
+  <div class="container">
+    <div class="book-grid" id="bookGrid"></div>
+  </div>
+  <div class="footer">
+    <p>📖 已有30本绘本，持续更新中…</p>
+    <p style="margin-top: 8px;">关注公众号 <strong>不慌小姐不慌张</strong> 获取最新动态</p>
+    <p style="margin-top: 16px; font-size: 12px; color: #999;">© 2026 宝贝绘本乐园 · 用心做好每一本绘本</p>
+  </div>
+  <script>
+    const books = [
+      { id: 'book-001', title: '小舞者的梦想', age: '3-8岁', isFree: true, status: 'online', cover: 'books/book-001/cover.png' },
+      { id: 'book-002', title: '小狐狸的星空之旅', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-002/cover.png' },
+      { id: 'book-003', title: '小熊的蜂蜜收集之旅', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-003/cover.png' },
+      { id: 'book-004', title: '小松鼠的坚果储存计划', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-004/cover.png' },
+      { id: 'book-005', title: '小种子的旅行', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-005/cover.png' },
+      { id: 'book-006', title: '勇敢的小雨滴', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-006/cover.png' },
+      { id: 'book-007', title: '雪花的秘密', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-007/cover.png' },
+      { id: 'book-008', title: '梦想的距离', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-008/cover.png' },
+      { id: 'book-009', title: '小蓝的梦想', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-009/cover.png' },
+      { id: 'book-010', title: '小鸟的第一首歌', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-010/cover.png' },
+      { id: 'book-011', title: '小云的梦想', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-011/cover.png' },
+      { id: 'book-012', title: '小乌龟的比赛', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-012/cover.png' },
+      { id: 'book-013', title: '彩虹花', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-013/cover.png' },
+      { id: 'book-014', title: '感恩的小鹿', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-014/cover.png' },
+      { id: 'book-015', title: '小刺猬的礼物', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-015/cover.png' },
+      { id: 'book-016', title: '小蚂蚁的团队合作', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-016/cover.png' },
+      { id: 'book-017', title: '诚实的小老鼠', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-017/cover.png' },
+      { id: 'book-018', title: '小鹰的第一次飞行', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-018/cover.png' },
+      { id: 'book-019', title: '小松鼠的珍贵储存', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-019/cover.png' },
+      { id: 'book-020', title: '不会滑行的小企鹅', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-020/cover.png' },
+      { id: 'book-021', title: '小海狸的水坝', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-021/cover.png' },
+      { id: 'book-022', title: '小毛毛虫的蜕变', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-022/cover.png' },
+      { id: 'book-023', title: '雨后的彩虹', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-023/cover.png' },
+      { id: 'book-024', title: '看见星星的小鼹鼠', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-024/cover.png' },
+      { id: 'book-025', title: '小鲸鱼的唱歌课', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-025/cover.png' },
+      { id: 'book-026', title: '小猫头鹰的四季之旅', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-026/cover.png' },
+      { id: 'book-027', title: '小黄鸭的第一次游泳', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-027/cover.png' },
+      { id: 'book-028', title: '小熊猫的竹林', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-028/cover.png' },
+      { id: 'book-029', title: '犯错的小兔子', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-029/cover.png' },
+      { id: 'book-030', title: '小园丁女孩', age: '3-8岁', isFree: false, status: 'coming_soon', cover: 'books/book-030/cover.png' }
+    ];
+    const grid = document.getElementById('bookGrid');
+    books.forEach(book => {
+      const card = document.createElement('a');
+      card.className = 'book-card';
+      card.href = book.status === 'online' ? `book.html?id=${book.id}` : '#';
+      card.innerHTML = `
+        <div class="book-cover">${book.cover ? `<img src="${book.cover}" alt="${book.title}" onerror="this.parentElement.innerHTML='📖'">` : '📖'}</div>
+        <div class="book-info">
+          <div class="book-title">${book.title}</div>
+          <div class="book-meta">${book.age}</div>
+          <span class="badge ${book.isFree ? 'badge-free' : 'badge-coming'}">${book.isFree ? '免费试读' : '敬请期待'}</span>
+        </div>`;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

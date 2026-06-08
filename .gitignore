@@ -1,0 +1,24 @@
+# Git ignore for BookBuddy Website
+
+# 忽略临时文件
+*.tmp
+*.log
+*.swp
+*~
+
+# 忽略IDE文件
+.vscode/
+.idea/
+*.sublime-*
+
+# 忽略操作系统文件
+.DS_Store
+Thumbs.db
+
+# 忽略大型视频文件（如果超过100MB）
+# books/*/video.mp4
+
+# 忽略压缩文件
+*.zip
+*.tar.gz
+*.rar

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>阅读 - 宝贝绘本乐园</title>
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    html, body { width:100%; height:100%; overflow: hidden; background: #000; font-family: -apple-system, sans-serif; }
+    .header { position: fixed; top:0; left:0; right:0; z-index: 20; display: flex; align-items: center; padding: 8px 12px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
+    .back-btn { color: white; font-size: 20px; text-decoration: none; margin-right: 12px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    .header-title { color: white; font-size: 15px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    .video-container { width:100%; height:100%; display: flex; align-items: center; justify-content: center; }
+    video { width:100%; height:100%; object-fit: contain; }
+    .bottom-bar { position: fixed; bottom:0; left:0; right:0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 24px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); }
+    .accent-switch { display: flex; gap: 4px; }
+    .accent-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 13px; cursor: pointer; backdrop-filter: blur(8px); }
+    .accent-btn.active { background: rgba(74,144,226,0.8); border-color: #4A90E2; }
+    .hint-text { color: rgba(255,255,255,0.7); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="book.html?id=book-001" class="back-btn">←</a>
+    <span class="header-title" id="headerTitle">小舞者的梦想</span>
+  </div>
+  <div class="video-container">
+    <video id="videoPlayer" src="" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true">
+      您的浏览器不支持视频播放，请使用Chrome或Safari浏览器。
+    </video>
+  </div>
+  <div class="bottom-bar">
+    <div class="accent-switch">
+      <button class="accent-btn active" id="btnGb" onclick="switchAccent('en-gb')">🇬🇧 英式</button>
+      <button class="accent-btn" id="btnUs" onclick="switchAccent('en-us')">🇺🇸 美式</button>
+    </div>
+    <div class="hint-text">更多绘本即将上线 ✨</div>
+  </div>
+  <script>
+    const video = document.getElementById('videoPlayer');
+    const params = new URLSearchParams(location.search);
+    const bookId = params.get('id') || 'book-001';
+    const accent = params.get('accent') || 'en-gb';
+
+    // 视频路径配置（book-001 使用本地文件，目前英/美口音共用同一视频）
+    const videoMap = {
+      'book-001': { en_gb: 'books/book-001/video.mp4', en_us: 'books/book-001/video.mp4' }
+    };
+    // 实际文件：目前只有合并版，两个口音指向同一文件
+    const currentVideo = videoMap[bookId] || videoMap['book-001'];
+    video.src = currentVideo[accent] || currentVideo['en_gb'];
+
+    function switchAccent(acc){
+      const v = videoMap[bookId];
+      if(v && v[acc]){
+        video.src = v[acc];
+        video.play();
+        document.getElementById('btnGb').classList.toggle('active', acc==='en-gb');
+        document.getElementById('btnUs').classList.toggle('active', acc==='en-us');
+        // 更新URL不刷新
+        history.replaceState(null, '', `reader.html?id=${bookId}&accent=${acc}`);
+      }
+    }
+    // 初始化口音按钮状态
+    document.getElementById('btnGb').classList.toggle('active', accent==='en-gb');
+    document.getElementById('btnUs').classList.toggle('active', accent==='en-us');
+
+    // 自动播放（需用户交互，这里依赖页面加载后的自动播放策略）
+    video.muted = true;  // 先静音自动播放，用户点击后取消静音
+    video.play().then(()=>{
+      // 3秒后取消静音（需要用户有过交互）
+      setTimeout(()=>{ video.muted = false; }, 3000);
+    }).catch(e=>{
+      console.log('Autoplay prevented:', e);
+      // 显示播放按钮让用户点击
+    });
+  </script>
+</body>
+</html>

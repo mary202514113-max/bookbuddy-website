@@ -17,6 +17,13 @@
     .accent-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 13px; cursor: pointer; backdrop-filter: blur(8px); }
     .accent-btn.active { background: rgba(74,144,226,0.8); border-color: #4A90E2; }
     .hint-text { color: rgba(255,255,255,0.7); font-size: 12px; }
+    .speed-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 13px; cursor: pointer; backdrop-filter: blur(8px); }
+    .speed-btn.active { background: rgba(255,165,0,0.8); border-color: #FFA500; }
+    .speed-overlay { display: none; position: fixed; bottom: 80px; right: 16px; z-index: 30; background: rgba(0,0,0,0.9); border-radius: 12px; padding: 8px; backdrop-filter: blur(10px); }
+    .speed-overlay.show { display: block; }
+    .speed-option { display: block; width: 100%; padding: 8px 16px; border: none; background: transparent; color: white; font-size: 14px; cursor: pointer; text-align: left; border-radius: 8px; }
+    .speed-option:hover { background: rgba(255,255,255,0.1); }
+    .speed-option.active { color: #FFA500; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -31,48 +38,78 @@
   </div>
   <div class="bottom-bar">
     <div class="accent-switch">
-      <button class="accent-btn active" id="btnGb" onclick="switchAccent('en-gb')">🇬🇧 英式</button>
-      <button class="accent-btn" id="btnUs" onclick="switchAccent('en-us')">🇺🇸 美式</button>
+      <button class="accent-btn active" id="btnGb" onclick="switchAccent('en_gb')">🇬🇧 英式</button>
+      <button class="accent-btn" id="btnUs" onclick="switchAccent('en_us')">🇺🇸 美式</button>
     </div>
     <div class="hint-text">更多绘本即将上线 ✨</div>
+    <button class="speed-btn" id="speedBtn" onclick="toggleSpeed()">1x</button>
+  </div>
+  <div class="speed-overlay" id="speedOverlay">
+    <button class="speed-option" onclick="setSpeed(0.5)">0.5x</button>
+    <button class="speed-option" onclick="setSpeed(0.75)">0.75x</button>
+    <button class="speed-option active" onclick="setSpeed(1)">1x</button>
+    <button class="speed-option" onclick="setSpeed(1.25)">1.25x</button>
+    <button class="speed-option" onclick="setSpeed(1.5)">1.5x</button>
   </div>
   <script>
     const video = document.getElementById('videoPlayer');
     const params = new URLSearchParams(location.search);
     const bookId = params.get('id') || 'book-001';
-    const accent = params.get('accent') || 'en-gb';
+    const accent = params.get('accent') || 'en_gb';
 
     // 视频路径配置（book-001 支持英式/美式双口音切换）
     const videoMap = {
       'book-001': { en_gb: 'books/book-001/video_uk.mp4', en_us: 'books/book-001/video_us.mp4' }
     };
-    // 实际文件：目前只有合并版，两个口音指向同一文件
     const currentVideo = videoMap[bookId] || videoMap['book-001'];
     video.src = currentVideo[accent] || currentVideo['en_gb'];
+
+    // 语速控制
+    let currentSpeed = 1;
+    function toggleSpeed(){
+      const overlay = document.getElementById('speedOverlay');
+      overlay.classList.toggle('show');
+    }
+    function setSpeed(speed){
+      currentSpeed = speed;
+      video.playbackRate = speed;
+      document.getElementById('speedBtn').textContent = speed + 'x';
+      document.querySelectorAll('.speed-option').forEach(btn => {
+        btn.classList.toggle('active', parseFloat(btn.textContent) === speed);
+      });
+      document.getElementById('speedOverlay').classList.remove('show');
+    }
+    // 点击外部关闭语速弹窗
+    document.addEventListener('click', (e) => {
+      const overlay = document.getElementById('speedOverlay');
+      const btn = document.getElementById('speedBtn');
+      if (!overlay.contains(e.target) && !btn.contains(e.target)) {
+        overlay.classList.remove('show');
+      }
+    });
 
     function switchAccent(acc){
       const v = videoMap[bookId];
       if(v && v[acc]){
+        const savedSpeed = video.playbackRate;
         video.src = v[acc];
+        video.playbackRate = savedSpeed;
         video.play();
-        document.getElementById('btnGb').classList.toggle('active', acc==='en-gb');
-        document.getElementById('btnUs').classList.toggle('active', acc==='en-us');
-        // 更新URL不刷新
+        document.getElementById('btnGb').classList.toggle('active', acc==='en_gb');
+        document.getElementById('btnUs').classList.toggle('active', acc==='en_us');
         history.replaceState(null, '', `reader.html?id=${bookId}&accent=${acc}`);
       }
     }
     // 初始化口音按钮状态
-    document.getElementById('btnGb').classList.toggle('active', accent==='en-gb');
-    document.getElementById('btnUs').classList.toggle('active', accent==='en-us');
+    document.getElementById('btnGb').classList.toggle('active', accent==='en_gb');
+    document.getElementById('btnUs').classList.toggle('active', accent==='en_us');
 
-    // 自动播放（需用户交互，这里依赖页面加载后的自动播放策略）
-    video.muted = true;  // 先静音自动播放，用户点击后取消静音
+    // 自动播放
+    video.muted = true;
     video.play().then(()=>{
-      // 3秒后取消静音（需要用户有过交互）
       setTimeout(()=>{ video.muted = false; }, 3000);
     }).catch(e=>{
       console.log('Autoplay prevented:', e);
-      // 显示播放按钮让用户点击
     });
   </script>
 </body>

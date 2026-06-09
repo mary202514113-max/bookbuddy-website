@@ -7,16 +7,33 @@
   <style>
     * { margin:0; padding:0; box-sizing: border-box; }
     html, body { width:100%; height:100%; overflow: hidden; background: #000; font-family: -apple-system, sans-serif; }
-    .header { position: fixed; top:0; left:0; right:0; z-index: 20; display: flex; align-items: center; padding: 8px 12px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
+    .header { position: fixed; top:0; left:0; right:0; z-index: 20; display: flex; align-items: center; padding: 8px 12px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); transition: opacity 0.3s; }
+    .header.hidden { opacity:0; pointer-events: none; }
     .back-btn { color: white; font-size: 20px; text-decoration: none; margin-right: 12px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
     .header-title { color: white; font-size: 15px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
     .video-container { width:100%; height:100%; display: flex; align-items: center; justify-content: center; }
     video { width:100%; height:100%; object-fit: contain; }
-    .bottom-bar { position: fixed; bottom:0; left:0; right:0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 24px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); }
+
+    /* 自定义进度条区域 */
+    .progress-area { position: fixed; bottom: 52px; left:0; right:0; height: 32px; z-index: 25; display: flex; align-items: center; padding: 0 16px; cursor: pointer; }
+    .progress-track { width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; position: relative; overflow: visible; transition: height 0.15s; }
+    .progress-area:hover .progress-track { height: 6px; }
+    .progress-buffer { height: 100%; background: rgba(255,255,255,0.3); border-radius: 2px; position: absolute; top:0; left:0; }
+    .progress-played { height: 100%; background: #4A90E2; border-radius: 2px; position: absolute; top:0; left:0; transition: width 0.1s linear; }
+    .progress-thumb { width: 14px; height: 14px; background: #4A90E2; border-radius: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 4px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.15s; }
+    .progress-area:hover .progress-thumb { opacity: 1; }
+    .progress-time { position: absolute; bottom: 40px; left: 0; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; }
+    .progress-area:hover .progress-time { opacity: 1; }
+
+    /* 底部控制栏 */
+    .bottom-bar { position: fixed; bottom:0; left:0; right:0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 20px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); transition: opacity 0.3s; }
+    .bottom-bar.hidden { opacity:0; pointer-events: none; }
     .accent-switch { display: flex; gap: 4px; }
     .accent-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 13px; cursor: pointer; backdrop-filter: blur(8px); }
     .accent-btn.active { background: rgba(74,144,226,0.8); border-color: #4A90E2; }
     .hint-text { color: rgba(255,255,255,0.7); font-size: 12px; }
+    .controls-right { display: flex; align-items: center; gap: 8px; }
+    .play-pause-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
     .speed-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 13px; cursor: pointer; backdrop-filter: blur(8px); }
     .speed-btn.active { background: rgba(255,165,0,0.8); border-color: #FFA500; }
     .speed-overlay { display: none; position: fixed; bottom: 80px; right: 16px; z-index: 30; background: rgba(0,0,0,0.9); border-radius: 12px; padding: 8px; backdrop-filter: blur(10px); }
@@ -24,26 +41,45 @@
     .speed-option { display: block; width: 100%; padding: 8px 16px; border: none; background: transparent; color: white; font-size: 14px; cursor: pointer; text-align: left; border-radius: 8px; }
     .speed-option:hover { background: rgba(255,255,255,0.1); }
     .speed-option.active { color: #FFA500; font-weight: 600; }
+
+    /* 时间显示 */
+    .time-display { color: rgba(255,255,255,0.8); font-size: 12px; margin: 0 8px; min-width: 90px; text-align: center; }
   </style>
 </head>
 <body>
-  <div class="header">
+  <div class="header" id="header">
     <a href="book.html?id=book-001" class="back-btn">←</a>
     <span class="header-title" id="headerTitle">绘本书阅读</span>
   </div>
-  <div class="video-container">
-    <video id="videoPlayer" src="" controls autoplay playsinline webkit-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true">
+  <div class="video-container" id="videoContainer">
+    <video id="videoPlayer" src="" autoplay playsinline webkit-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true">
       您的浏览器不支持视频播放，请使用Chrome或Safari浏览器。
     </video>
   </div>
-  <div class="bottom-bar">
+
+  <!-- 自定义进度条 -->
+  <div class="progress-area" id="progressArea">
+    <div class="progress-track" id="progressTrack">
+      <div class="progress-buffer" id="progressBuffer"></div>
+      <div class="progress-played" id="progressPlayed"></div>
+      <div class="progress-thumb" id="progressThumb"></div>
+      <div class="progress-time" id="progressTime"></div>
+    </div>
+  </div>
+
+  <!-- 底部控制栏 -->
+  <div class="bottom-bar" id="bottomBar">
     <div class="accent-switch">
       <button class="accent-btn active" id="btnGb" onclick="switchAccent('en_gb')">🇬🇧 英式</button>
       <button class="accent-btn" id="btnUs" onclick="switchAccent('en_us')">🇺🇸 美式</button>
     </div>
-    <div class="hint-text">更多绘本即将上线 ✨</div>
-    <button class="speed-btn" id="speedBtn" onclick="toggleSpeed()">1x</button>
+    <div class="controls-right">
+      <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+      <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlay()">⏸</button>
+      <button class="speed-btn" id="speedBtn" onclick="toggleSpeed()">1x</button>
+    </div>
   </div>
+
   <div class="speed-overlay" id="speedOverlay">
     <button class="speed-option" onclick="setSpeed(0.5)">0.5x</button>
     <button class="speed-option" onclick="setSpeed(0.75)">0.75x</button>
@@ -51,20 +87,21 @@
     <button class="speed-option" onclick="setSpeed(1.25)">1.25x</button>
     <button class="speed-option" onclick="setSpeed(1.5)">1.5x</button>
   </div>
+
   <script>
     const video = document.getElementById('videoPlayer');
     const params = new URLSearchParams(location.search);
     const bookId = params.get('id') || 'book-001';
     const accent = params.get('accent') || 'en_gb';
 
-    // 视频路径配置（book-001 支持英式/美式双口音切换）
+    // 视频路径配置
     const videoMap = {
       'book-001': { en_gb: 'books/book-001/video_uk.mp4', en_us: 'books/book-001/video_us.mp4' }
     };
     const currentVideo = videoMap[bookId] || videoMap['book-001'];
     video.src = currentVideo[accent] || currentVideo['en_gb'];
-    
-    // 书名映射（用于动态更新标题）
+
+    // 书名映射
     const bookNames = {
       'book-001': '小舞者的梦想', 'book-002': '小狐狸的星空之旅', 'book-003': '小熊的蜂蜜收集之旅',
       'book-004': '小松鼠的坚果储存计划', 'book-005': '小种子的旅行', 'book-006': '勇敢的小雨滴',
@@ -79,7 +116,102 @@
     };
     document.getElementById('headerTitle').textContent = bookNames[bookId] || '绘本书阅读';
 
-    // 语速控制
+    // ===== 自定义进度条 =====
+    const progressArea = document.getElementById('progressArea');
+    const progressTrack = document.getElementById('progressTrack');
+    const progressPlayed = document.getElementById('progressPlayed');
+    const progressBuffer = document.getElementById('progressBuffer');
+    const progressThumb = document.getElementById('progressThumb');
+    const progressTime = document.getElementById('progressTime');
+    const timeDisplay = document.getElementById('timeDisplay');
+    let isDragging = false;
+
+    function formatTime(sec) {
+      if (!sec || isNaN(sec)) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function updateProgress() {
+      if (!video.duration || isNaN(video.duration)) return;
+      const pct = (video.currentTime / video.duration) * 100;
+      progressPlayed.style.width = pct + '%';
+      progressThumb.style.left = pct + '%';
+      timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+    }
+
+    function updateBuffer() {
+      if (video.buffered.length > 0) {
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        const pct = (bufferedEnd / video.duration) * 100;
+        progressBuffer.style.width = Math.min(pct, 100) + '%';
+      }
+    }
+
+    function seekTo(e) {
+      if (!video.duration) return;
+      const rect = progressTrack.getBoundingClientRect();
+      const x = (e.clientX || e.touches[0].clientX) - rect.left;
+      const pct = Math.max(0, Math.min(1, x / rect.width));
+      video.currentTime = pct * video.duration;
+      updateProgress();
+    }
+
+    // 点击跳转
+    progressArea.addEventListener('click', (e) => {
+      if (e.target === progressThumb) return; // 避免和拖动冲突
+      seekTo(e);
+    });
+
+    // 拖动开始
+    progressThumb.addEventListener('mousedown', (e) => { isDragging = true; e.preventDefault(); });
+    progressThumb.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); }, { passive: false });
+
+    // 拖动中
+    document.addEventListener('mousemove', (e) => { if (isDragging) { seekTo(e); updateTooltip(e); } });
+    document.addEventListener('touchmove', (e) => { if (isDragging) { seekTo(e); updateTooltip(e); } }, { passive: false });
+
+    // 拖动结束
+    document.addEventListener('mouseup', () => { isDragging = false; progressTime.style.opacity = '0'; });
+    document.addEventListener('touchend', () => { isDragging = false; progressTime.style.opacity = '0'; });
+
+    // 悬停显示时间
+    function updateTooltip(e) {
+      if (!video.duration) return;
+      const rect = progressTrack.getBoundingClientRect();
+      const x = (e.clientX || e.touches[0].clientX) - rect.left;
+      const pct = Math.max(0, Math.min(1, x / rect.width));
+      const time = pct * video.duration;
+      progressTime.textContent = formatTime(time);
+      progressTime.style.left = pct * 100 + '%';
+      progressTime.style.opacity = '1';
+    }
+    progressArea.addEventListener('mousemove', (e) => { if (!isDragging) updateTooltip(e); });
+    progressArea.addEventListener('touchmove', (e) => { if (!isDragging) updateTooltip(e); }, { passive: false });
+
+    // 视频事件
+    video.addEventListener('timeupdate', updateProgress);
+    video.addEventListener('progress', updateBuffer);
+    video.addEventListener('loadedmetadata', () => {
+      updateProgress();
+      document.getElementById('playPauseBtn').textContent = video.paused ? '▶' : '⏸';
+    });
+    video.addEventListener('play', () => { document.getElementById('playPauseBtn').textContent = '⏸'; });
+    video.addEventListener('pause', () => { document.getElementById('playPauseBtn').textContent = '▶'; });
+
+    // ===== 播放/暂停 =====
+    function togglePlay() {
+      if (video.paused) { video.play(); } else { video.pause(); }
+    }
+    // 点击视频区域也可以暂停/播放
+    document.getElementById('videoContainer').addEventListener('click', (e) => {
+      // 避免点击进度条时触发
+      if (progressArea.contains(e.target)) return;
+      togglePlay();
+    });
+
+    // ===== 语速控制 =====
     let currentSpeed = 1;
     function toggleSpeed(){
       const overlay = document.getElementById('speedOverlay');
@@ -94,7 +226,6 @@
       });
       document.getElementById('speedOverlay').classList.remove('show');
     }
-    // 点击外部关闭语速弹窗
     document.addEventListener('click', (e) => {
       const overlay = document.getElementById('speedOverlay');
       const btn = document.getElementById('speedBtn');
@@ -103,23 +234,46 @@
       }
     });
 
+    // ===== 口音切换 =====
     function switchAccent(acc){
       const v = videoMap[bookId];
       if(v && v[acc]){
         const savedSpeed = video.playbackRate;
+        const wasPlaying = !video.paused;
         video.src = v[acc];
         video.playbackRate = savedSpeed;
-        video.play();
+        if (wasPlaying) video.play();
         document.getElementById('btnGb').classList.toggle('active', acc==='en_gb');
         document.getElementById('btnUs').classList.toggle('active', acc==='en_us');
         history.replaceState(null, '', `reader.html?id=${bookId}&accent=${acc}`);
       }
     }
-    // 初始化口音按钮状态
     document.getElementById('btnGb').classList.toggle('active', accent==='en_gb');
     document.getElementById('btnUs').classList.toggle('active', accent==='en_us');
 
-    // 自动播放
+    // ===== 自动隐藏控制栏 =====
+    let hideTimer = null;
+    function showControls() {
+      document.getElementById('header').classList.remove('hidden');
+      document.getElementById('bottomBar').classList.remove('hidden');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if (!video.paused) {
+          document.getElementById('header').classList.add('hidden');
+          document.getElementById('bottomBar').classList.add('hidden');
+        }
+      }, 3000);
+    }
+    document.addEventListener('mousemove', showControls);
+    document.addEventListener('touchstart', showControls);
+    video.addEventListener('play', showControls);
+    video.addEventListener('pause', () => {
+      document.getElementById('header').classList.remove('hidden');
+      document.getElementById('bottomBar').classList.remove('hidden');
+    });
+    showControls();
+
+    // ===== 自动播放 =====
     video.muted = true;
     video.play().then(()=>{
       setTimeout(()=>{ video.muted = false; }, 3000);

@@ -49,7 +49,7 @@
 </head>
 <body>
   <div class="header" id="header">
-    <a href="book.html?id=book-001" class="back-btn">←</a>
+    <a href="book.html" class="back-btn" id="backBtn">←</a>
     <span class="header-title" id="headerTitle">绘本书阅读</span>
   </div>
   <div class="video-container" id="videoContainer">
@@ -97,7 +97,36 @@
 
     // 视频路径配置
     const videoMap = {
-      'book-001': { en_gb: 'books/book-001/video_uk.mp4', en_us: 'books/book-001/video_us.mp4' }
+      'book-001': { en_gb: 'books/book-001/video_uk.mp4', en_us: 'books/book-001/video_us.mp4' },
+      'book-002': { en_gb: 'books/book-002/video_uk.mp4', en_us: 'books/book-002/video_us.mp4' },
+      'book-003': { en_gb: 'books/book-003/video_uk.mp4', en_us: 'books/book-003/video_us.mp4' },
+      'book-004': { en_gb: 'books/book-004/video_uk.mp4', en_us: 'books/book-004/video_us.mp4' },
+      'book-005': { en_gb: 'books/book-005/video_uk.mp4', en_us: 'books/book-005/video_us.mp4' },
+      'book-006': { en_gb: 'books/book-006/video_uk.mp4', en_us: 'books/book-006/video_us.mp4' },
+      'book-007': { en_gb: 'books/book-007/video_uk.mp4', en_us: 'books/book-007/video_us.mp4' },
+      'book-008': { en_gb: 'books/book-008/video_uk.mp4', en_us: 'books/book-008/video_us.mp4' },
+      'book-009': { en_gb: 'books/book-009/video_uk.mp4', en_us: 'books/book-009/video_us.mp4' },
+      'book-010': { en_gb: 'books/book-010/video_uk.mp4', en_us: 'books/book-010/video_us.mp4' },
+      'book-011': { en_gb: 'books/book-011/video_uk.mp4', en_us: 'books/book-011/video_us.mp4' },
+      'book-012': { en_gb: 'books/book-012/video_uk.mp4', en_us: 'books/book-012/video_us.mp4' },
+      'book-013': { en_gb: 'books/book-013/video_uk.mp4', en_us: 'books/book-013/video_us.mp4' },
+      'book-014': { en_gb: 'books/book-014/video_uk.mp4', en_us: 'books/book-014/video_us.mp4' },
+      'book-015': { en_gb: 'books/book-015/video_uk.mp4', en_us: 'books/book-015/video_us.mp4' },
+      'book-016': { en_gb: 'books/book-016/video_uk.mp4', en_us: 'books/book-016/video_us.mp4' },
+      'book-017': { en_gb: 'books/book-017/video_uk.mp4', en_us: 'books/book-017/video_us.mp4' },
+      'book-018': { en_gb: 'books/book-018/video_uk.mp4', en_us: 'books/book-018/video_us.mp4' },
+      'book-019': { en_gb: 'books/book-019/video_uk.mp4', en_us: 'books/book-019/video_us.mp4' },
+      'book-020': { en_gb: 'books/book-020/video_uk.mp4', en_us: 'books/book-020/video_us.mp4' },
+      'book-021': { en_gb: 'books/book-021/video_uk.mp4', en_us: 'books/book-021/video_us.mp4' },
+      'book-022': { en_gb: 'books/book-022/video_uk.mp4', en_us: 'books/book-022/video_us.mp4' },
+      'book-023': { en_gb: 'books/book-023/video_uk.mp4', en_us: 'books/book-023/video_us.mp4' },
+      'book-024': { en_gb: 'books/book-024/video_uk.mp4', en_us: 'books/book-024/video_us.mp4' },
+      'book-025': { en_gb: 'books/book-025/video_uk.mp4', en_us: 'books/book-025/video_us.mp4' },
+      'book-026': { en_gb: 'books/book-026/video_uk.mp4', en_us: 'books/book-026/video_us.mp4' },
+      'book-027': { en_gb: 'books/book-027/video_uk.mp4', en_us: 'books/book-027/video_us.mp4' },
+      'book-028': { en_gb: 'books/book-028/video_uk.mp4', en_us: 'books/book-028/video_us.mp4' },
+      'book-029': { en_gb: 'books/book-029/video_uk.mp4', en_us: 'books/book-029/video_us.mp4' },
+      'book-030': { en_gb: 'books/book-030/video_uk.mp4', en_us: 'books/book-030/video_us.mp4' }
     };
     const currentVideo = videoMap[bookId] || videoMap['book-001'];
     video.src = currentVideo[accent] || currentVideo['en_gb'];
@@ -116,6 +145,7 @@
       'book-028': '小熊猫的竹林', 'book-029': '犯错的小兔子', 'book-030': '小园丁女孩'
     };
     document.getElementById('headerTitle').textContent = bookNames[bookId] || '绘本书阅读';
+    document.getElementById('backBtn').href = 'book.html?id=' + bookId;
 
     // ===== 自定义进度条 =====
     const progressArea = document.getElementById('progressArea');

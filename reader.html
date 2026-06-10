@@ -36,6 +36,7 @@
     .play-pause-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
     .speed-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 13px; cursor: pointer; backdrop-filter: blur(8px); }
     .speed-btn.active { background: rgba(255,165,0,0.8); border-color: #FFA500; }
+    .fullscreen-btn { padding: 6px 10px; border: 1px solid rgba(255,255,255,0.5); border-radius: 16px; background: rgba(255,255,255,0.15); color: white; font-size: 15px; cursor: pointer; backdrop-filter: blur(8px); }
     .speed-overlay { display: none; position: fixed; bottom: 80px; right: 16px; z-index: 30; background: rgba(0,0,0,0.9); border-radius: 12px; padding: 8px; backdrop-filter: blur(10px); }
     .speed-overlay.show { display: block; }
     .speed-option { display: block; width: 100%; padding: 8px 16px; border: none; background: transparent; color: white; font-size: 14px; cursor: pointer; text-align: left; border-radius: 8px; }
@@ -77,6 +78,7 @@
       <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
       <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlay()">⏸</button>
       <button class="speed-btn" id="speedBtn" onclick="toggleSpeed()">1x</button>
+      <button class="fullscreen-btn" id="fsBtn" onclick="toggleFullscreen()">⛶</button>
     </div>
   </div>
 
@@ -225,6 +227,16 @@
       });
       document.getElementById('speedOverlay').classList.remove('show');
     }
+    function toggleFullscreen(){
+      if(document.fullscreenElement){
+        document.exitFullscreen();
+      } else {
+        document.getElementById('videoContainer').requestFullscreen();
+      }
+    }
+    document.addEventListener('fullscreenchange', () => {
+      document.getElementById('fsBtn').textContent = document.fullscreenElement ? '⛶' : '⛶';
+    });
     document.addEventListener('click', (e) => {
       const overlay = document.getElementById('speedOverlay');
       const btn = document.getElementById('speedBtn');

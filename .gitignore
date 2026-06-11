@@ -18,6 +18,15 @@ Thumbs.db
 # 忽略大型视频文件（如果超过100MB）
 # books/*/video.mp4
 
+# 忽略错误版本视频文件
+books/*/video_*_v*.mp4
+books/*/video_*_old.mp4
+books/*/video_*_fixed.mp4
+books/*/video_tmp_*.mp4
+
+# 忽略预览文件
+preview_*.html
+
 # 忽略压缩文件
 *.zip
 *.tar.gz

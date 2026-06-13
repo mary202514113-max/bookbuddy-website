@@ -1,0 +1,2 @@
+file 'E:/WorkBuddy/picture-books/book-013/audio_lines_v25/uk_06.mp3'
+file 'E:/WorkBuddy/picture-books/book-013/audio_lines_v25/s_06.mp3'
